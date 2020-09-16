@@ -294,7 +294,7 @@ void processor_t::parse_isa_string(const char* str)
 
 void state_t::reset(reg_t max_isa)
 {
-  pc = DEFAULT_RSTVEC;
+  pc = DRAM_BASE;
   XPR.reset();
   FPR.reset();
 
