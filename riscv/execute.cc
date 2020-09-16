@@ -72,11 +72,12 @@ static void commit_log_print_insn(processor_t *p, reg_t pc, insn_t insn)
 
   if (p->get_executions() > 1) return;
 
-  fprintf(log_file, "%1d ", priv);
+  //fprintf(log_file, "%1d ", priv);
+  const char* priv_str = priv == PRV_U ? "USER" : priv == PRV_S ? "SUPV" : priv == PRV_M ? "MACH" : "UNKNOWN";
   commit_log_print_value(log_file, xlen, pc);
-  fprintf(log_file, " (");
+  fprintf(log_file, ": md=%s insn=", priv_str);
   commit_log_print_value(log_file, insn.length() * 8, insn.bits());
-  fprintf(log_file, ")");
+  fprintf(log_file, ":");
   bool show_vec = false;
 
   for (auto item : reg) {
@@ -125,9 +126,9 @@ static void commit_log_print_insn(processor_t *p, reg_t pc, insn_t insn)
 
     if (!is_vec) {
       if (prefix == 'c')
-        fprintf(log_file, " c%d_%s ", rd, csr_name(rd));
+        fprintf(log_file, " c%d_%s:= ", rd, csr_name(rd));
       else
-        fprintf(log_file, " %c%2d ", prefix, rd);
+        fprintf(log_file, " %c%0d:= ", prefix, rd);
       if (is_vreg)
         commit_log_print_value(log_file, size, &p->VU.elt<uint8_t>(rd, 0));
       else
@@ -136,14 +137,15 @@ static void commit_log_print_insn(processor_t *p, reg_t pc, insn_t insn)
   }
 
   for (auto item : load) {
-    fprintf(log_file, " mem ");
+    fprintf(log_file, " == mem[");
     commit_log_print_value(log_file, xlen, std::get<0>(item));
+    fprintf(log_file, "]");
   }
 
   for (auto item : store) {
-    fprintf(log_file, " mem ");
+    fprintf(log_file, " mem[");
     commit_log_print_value(log_file, xlen, std::get<0>(item));
-    fprintf(log_file, " ");
+    fprintf(log_file, "]:= ");
     commit_log_print_value(log_file, std::get<2>(item) << 3, std::get<1>(item));
   }
   fprintf(log_file, "\n");
