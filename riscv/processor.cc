@@ -443,6 +443,10 @@ void processor_t::enable_log_commits()
 {
   log_commits_enabled = true;
 }
+int processor_t::get_executions()
+{
+  return executions;
+}
 #endif
 
 void processor_t::reset()

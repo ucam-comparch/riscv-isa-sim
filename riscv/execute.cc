@@ -70,6 +70,8 @@ static void commit_log_print_insn(processor_t *p, reg_t pc, insn_t insn)
   int xlen = p->get_state()->last_inst_xlen;
   int flen = p->get_state()->last_inst_flen;
 
+  if (p->get_executions() > 1) return;
+
   fprintf(log_file, "%1d ", priv);
   commit_log_print_value(log_file, xlen, pc);
   fprintf(log_file, " (");
