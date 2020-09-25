@@ -1228,14 +1228,17 @@ void processor_t::set_csr(int which, reg_t val)
       dirty_vs_state;
       VU.vxrm = val & 0x3ul;
       break;
-    #ifdef BARE_METAL_OUTPUT_CSR
+#ifdef BARE_METAL_OUTPUT_CSR
+    case CSR_BAREMETAL_OUTPUT_HEX:
+      fprintf(stderr, "Debug output: 0x%x\n", ((int) val));
+      break;
     case CSR_BAREMETAL_OUTPUT_CHAR:
       fprintf(stderr, "%c", ((int) val));
       break;
-    case CSR_BAREMETAL_OUTPUT_HEX:
-      fprintf(stderr, "DEBUG PRINT: %x\n", ((int) val));
+    case CSR_BAREMETAL_OUTPUT_INT:
+      fprintf(stderr, "0x%x", ((int) val));
       break;
-    #endif //bare metal output csr
+#endif //bare metal output csr
   }
 
 #if defined(RISCV_ENABLE_COMMITLOG)
@@ -1369,12 +1372,14 @@ reg_t processor_t::get_csr(int which)
     return res;
   }
 
-  #ifdef BARE_METAL_OUTPUT_CSR
-  if (which == CSR_BAREMETAL_OUTPUT_CHAR)
-    return 0;
+#ifdef BARE_METAL_OUTPUT_CSR
   if (which == CSR_BAREMETAL_OUTPUT_HEX)
     return 0;
-  #endif
+  if (which == CSR_BAREMETAL_OUTPUT_CHAR)
+    return 0;
+  if (which == CSR_BAREMETAL_OUTPUT_INT)
+    return 0;
+#endif
 
   switch (which)
   {
