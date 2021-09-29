@@ -147,6 +147,7 @@ static void commit_log_print_insn(processor_t *p, reg_t pc, insn_t insn)
   for (auto item : load) {
     fprintf(log_file, " == mem[");
     commit_log_print_value(log_file, xlen, std::get<0>(item));
+    fprintf(log_file, "]");
   }
 
   for (auto item : store) {
