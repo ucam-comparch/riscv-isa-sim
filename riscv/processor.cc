@@ -1093,11 +1093,14 @@ void processor_t::set_csr(int which, reg_t val)
       VU.vxrm = val & 0x3ul;
       break;
 #ifdef BARE_METAL_OUTPUT_CSR
+    case CSR_BAREMETAL_OUTPUT_HEX:
+      fprintf(stderr, "Debug output: 0x%x\n", ((int) val));
+      break;
     case CSR_BAREMETAL_OUTPUT_CHAR:
       fprintf(stderr, "%c", ((int) val));
       break;
-    case CSR_BAREMETAL_OUTPUT_HEX:
-      fprintf(stderr, "DEBUG PRINT: %x\n", ((int) val));
+    case CSR_BAREMETAL_OUTPUT_INT:
+      fprintf(stderr, "%d", ((int) val));
       break;
 #endif //bare metal output csr
   }
@@ -1190,9 +1193,11 @@ reg_t processor_t::get_csr(int which, insn_t insn, bool write, bool peek)
   }
 
 #ifdef BARE_METAL_OUTPUT_CSR
+ if (which == CSR_BAREMETAL_OUTPUT_HEX)
+   return 0;
  if (which == CSR_BAREMETAL_OUTPUT_CHAR)
    return 0;
- if (which == CSR_BAREMETAL_OUTPUT_HEX)
+ if (which == CSR_BAREMETAL_OUTPUT_INT)
    return 0;
 #endif
 
